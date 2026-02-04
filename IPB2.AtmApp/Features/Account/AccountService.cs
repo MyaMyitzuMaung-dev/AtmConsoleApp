@@ -52,6 +52,28 @@
         public decimal Amount { get; set; }
     }
 
+    public class BalanceRequestDto
+    {
+        public BalanceRequestDto(string mobileNo)
+        {
+            MobileNo = mobileNo;
+        }
+
+        public string MobileNo { get; set; }
+    }
+
+    public class WithdrawRequestDto
+    {
+        public WithdrawRequestDto(string mobileNo, decimal amount)
+        {
+            MobileNo = mobileNo;
+            Amount = amount;
+        }
+
+        public string MobileNo { get; set; }
+        public decimal Amount { get; set; }
+    }
+
     #endregion
 
     // Business Logic
@@ -152,5 +174,44 @@
             };
         }
 
+        public BasicResponseDto GetBalance(BalanceRequestDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request.MobileNo))
+                return new BasicResponseDto { IsSuccess = false, Message = "Please enter your mobile no." };
+
+            var account = _accounts.FirstOrDefault(x => x.MobileNo == request.MobileNo.Trim());
+            if (account is null)
+                return new BasicResponseDto { IsSuccess = false, Message = "Account not found." };
+
+            return new BasicResponseDto
+            {
+                IsSuccess = true,
+                Message = $"Current balance: {account.Balance}"
+            };
+        }
+
+        public BasicResponseDto Withdraw(WithdrawRequestDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request.MobileNo))
+                return new BasicResponseDto { IsSuccess = false, Message = "Please enter your mobile no." };
+
+            if (request.Amount <= 0)
+                return new BasicResponseDto { IsSuccess = false, Message = "Amount must be greater than 0." };
+
+            var account = _accounts.FirstOrDefault(x => x.MobileNo == request.MobileNo.Trim());
+            if (account is null)
+                return new BasicResponseDto { IsSuccess = false, Message = "Account not found." };
+
+            if (request.Amount > account.Balance)
+                return new BasicResponseDto { IsSuccess = false, Message = "Insufficient balance." };
+
+            account.Balance -= request.Amount;
+
+            return new BasicResponseDto
+            {
+                IsSuccess = true,
+                Message = $"Withdraw successful. Current balance: {account.Balance}"
+            };
+        }
     }
 }

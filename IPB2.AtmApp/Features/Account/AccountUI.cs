@@ -11,14 +11,18 @@
                 Console.WriteLine("\n=== ATM App (Step 1) ===");
                 Console.WriteLine("1) Create Account");
                 Console.WriteLine("2) Deposit");
-                Console.WriteLine("3) Exit");
+                Console.WriteLine("3) Check Balance");
+                Console.WriteLine("4) Withdraw");
+                Console.WriteLine("5) Exit");
                 Console.Write("Choose: ");
                 var choice = Console.ReadLine();
 
 
                 if (choice == "1") CreateAccount();
                 else if (choice == "2") CreateDeposit();
-                else if (choice == "3") return;
+                else if (choice == "3") CheckBalance();
+                else if (choice == "4") Withdraw();
+                else if (choice == "5") return;
                 else Console.WriteLine("Invalid option.");
             }
         }
@@ -74,6 +78,38 @@
 
             Console.WriteLine(result.Message);
         }
-    }
 
+        private void CheckBalance()
+        {
+            Console.WriteLine("\n=== Check Balance ===");
+
+            Console.Write("Enter your mobile no: ");
+            string mobileNo = Console.ReadLine() ?? "";
+
+            var req = new BalanceRequestDto(mobileNo);
+            var result = _service.GetBalance(req);
+
+            Console.WriteLine(result.Message);
+        }
+
+        private void Withdraw()
+        {
+            Console.WriteLine("\n=== Withdraw ===");
+
+            Console.Write("Enter your mobile no: ");
+            string mobileNo = Console.ReadLine() ?? "";
+
+            Console.Write("Enter amount: ");
+            if (!decimal.TryParse(Console.ReadLine(), out var amount))
+            {
+                Console.WriteLine("Invalid amount.");
+                return;
+            }
+
+            var req = new WithdrawRequestDto(mobileNo, amount);
+            var result = _service.Withdraw(req);
+
+            Console.WriteLine(result.Message);
+        }
+    }
  }
