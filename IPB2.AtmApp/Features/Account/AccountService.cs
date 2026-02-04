@@ -25,7 +25,7 @@
     // Table
     public class AccountDto
     {
-        public AccountDto(string id, string name, string mobileNo, string password, decimal balance = 0) //constructor
+        public AccountDto(string id, string name, string mobileNo, string password, decimal balance = 1000) //constructor
         {
             AccountId = id;
             Name = name;
