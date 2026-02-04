@@ -16,7 +16,7 @@
         public string ConfirmPassword { get; set; }
     }
 
-    public class CreateAccountResponseDto
+    public class BasicResponseDto
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
@@ -25,7 +25,7 @@
     // Table
     public class AccountDto
     {
-        public AccountDto(string id, string name, string mobileNo, string password, decimal balance = 1000) //constructor
+        public AccountDto(string id, string name, string mobileNo, string password, decimal balance = 0) //constructor
         {
             AccountId = id;
             Name = name;
@@ -39,6 +39,19 @@
         public string Password { get; set; }
         public decimal Balance { get; set; }
     }
+
+    public class DepositRequestDto
+    {
+        public DepositRequestDto(string mobileNo, decimal amount)
+        {
+            MobileNo = mobileNo;
+            Amount = amount;
+        }
+
+        public string MobileNo { get; set; }
+        public decimal Amount { get; set; }
+    }
+
     #endregion
 
     // Business Logic
@@ -47,12 +60,12 @@
         // fake database
         private static List<AccountDto> _accounts = new List<AccountDto>();
 
-        public CreateAccountResponseDto CreateAccount(CreateAccountRequestDto request)
+        public BasicResponseDto CreateAccount(CreateAccountRequestDto request)
         {
             // Validation
             if (string.IsNullOrEmpty(request.Name))
             {
-                return new CreateAccountResponseDto
+                return new BasicResponseDto
                 {
                     IsSuccess = false,
                     Message = "Please enter your name."
@@ -60,7 +73,7 @@
             }
             if (string.IsNullOrEmpty(request.MobileNo))
             {
-                return new CreateAccountResponseDto
+                return new BasicResponseDto
                 {
                     IsSuccess = false,
                     Message = "Please enter your mobile no."
@@ -68,7 +81,7 @@
             }
             if (string.IsNullOrEmpty(request.Password))
             {
-                return new CreateAccountResponseDto
+                return new BasicResponseDto
                 {
                     IsSuccess = false,
                     Message = "Please enter your password."
@@ -76,7 +89,7 @@
             }
             if (string.IsNullOrEmpty(request.ConfirmPassword))
             {
-                return new CreateAccountResponseDto
+                return new BasicResponseDto
                 {
                     IsSuccess = false,
                     Message = "Please enter your confirm password."
@@ -86,7 +99,7 @@
             // Password check
             if (request.Password != request.ConfirmPassword)
             {
-                return new CreateAccountResponseDto
+                return new BasicResponseDto
                 {
                     IsSuccess = false,
                     Message = "Password and Confirm Password do not match."
@@ -97,7 +110,7 @@
             bool isExistMobileNo = _accounts.Any(x => x.MobileNo == request.MobileNo);
             if (isExistMobileNo)
             {
-                return new CreateAccountResponseDto
+                return new BasicResponseDto
                 {
                     IsSuccess = false,
                     Message = "Mobile No already exists."
@@ -111,11 +124,33 @@
                     request.Password
                 );
             _accounts.Add(accountDto);
-            return new CreateAccountResponseDto
+            return new BasicResponseDto
             {
                 IsSuccess = true,
                 Message = "Account created successfully."
             };
         }
+
+        public BasicResponseDto CreateDeposit(DepositRequestDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request.MobileNo))
+                return new BasicResponseDto { IsSuccess = false, Message = "Please enter your mobile no." };
+
+            if (request.Amount <= 0)
+                return new BasicResponseDto { IsSuccess = false, Message = "Amount must be greater than 0." };
+
+            var account = _accounts.FirstOrDefault(x => x.MobileNo == request.MobileNo.Trim()); //Trim to avoid spaces
+            if (account is null)
+                return new BasicResponseDto { IsSuccess = false, Message = "Account not found." };
+
+            account.Balance += request.Amount;
+
+            return new BasicResponseDto
+            {
+                IsSuccess = true,
+                Message = $"Deposit successful. Current balance: {account.Balance}"
+            };
+        }
+
     }
 }
