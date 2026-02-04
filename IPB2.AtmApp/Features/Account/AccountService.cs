@@ -1,5 +1,46 @@
 ﻿namespace IPB2.AtmApp.Features.Account
 {
+    #region Dtos
+    public class CreateAccountRequestDto
+    {
+        public CreateAccountRequestDto(string name, string mobileNo, string password, string confirmPassword)
+        {
+            Name = name;
+            MobileNo = mobileNo;
+            Password = password;
+            ConfirmPassword = confirmPassword;
+        }
+        public string Name { get; set; }
+        public string MobileNo { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+    }
+
+    public class CreateAccountResponseDto
+    {
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
+    }
+
+    // Table
+    public class AccountDto
+    {
+        public AccountDto(string id, string name, string mobileNo, string password, decimal balance = 0) //constructor
+        {
+            AccountId = id;
+            Name = name;
+            MobileNo = mobileNo;
+            Password = password;
+            Balance = balance;
+        }
+        public string AccountId { get; set; }
+        public string Name { get; set; }
+        public string MobileNo { get; set; }
+        public string Password { get; set; }
+        public decimal Balance { get; set; }
+    }
+    #endregion
+
     // Business Logic
     public class AccountService
     {

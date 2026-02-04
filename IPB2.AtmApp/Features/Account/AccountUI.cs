@@ -2,68 +2,56 @@
 {
     public class AccountUI
     {
-        public void CreateAccount()
+        private readonly AccountService _service = new AccountService();
+
+        public void Start()
         {
-            Console.WriteLine("=== Create New Account ===");
-            Console.Write("Enter your name: ");
-            string name = Console.ReadLine()!;
-            Console.Write("Enter your mobile no: ");
-            string mobileNo = Console.ReadLine()!;
-            EnterPassword:
-            Console.Write("Enter your password: ");
-            string password = Console.ReadLine()!;
-            Console.Write("Enter your confirm password: ");
-            string confirmPassword = Console.ReadLine()!;
-            if (password != confirmPassword)
+            while (true)
             {
+                Console.WriteLine("\n=== ATM App (Step 1) ===");
+                Console.WriteLine("1) Create Account");
+                Console.WriteLine("2) Exit");
+                Console.Write("Choose: ");
+                var choice = Console.ReadLine();
+
+                
+                if (choice == "1") CreateAccount();
+                else if (choice == "2") return;
+                else Console.WriteLine("Invalid option.");
+            }
+        }
+
+        private void CreateAccount()
+        {
+            Console.WriteLine("\n=== Create New Account ===");
+
+            Console.Write("Enter your name: ");
+            string name = Console.ReadLine() ?? "";
+
+            Console.Write("Enter your mobile no: ");
+            string mobileNo = Console.ReadLine() ?? "";
+
+            string password;
+            string confirmPassword;
+
+            while (true)
+            {
+                Console.Write("Enter your password: ");
+                password = Console.ReadLine() ?? "";
+
+                Console.Write("Enter your confirm password: ");
+                confirmPassword = Console.ReadLine() ?? "";
+
+                if (password == confirmPassword) break;
+
                 Console.WriteLine("Password and Confirm Password do not match.");
-                goto EnterPassword;
             }
 
-            CreateAccountRequestDto accountDto = new CreateAccountRequestDto(
-                name, mobileNo, password, confirmPassword);
-            AccountService accountService = new AccountService();
-            var result = accountService.CreateAccount(accountDto);
+            var req = new CreateAccountRequestDto(name, mobileNo, password, confirmPassword);
+            var result = _service.CreateAccount(req);
+
             Console.WriteLine(result.Message);
         }
     }
 
-    public class CreateAccountRequestDto
-    {
-        public CreateAccountRequestDto(string name, string mobileNo, string password, string confirmPassword)
-        {
-            Name = name;
-            MobileNo = mobileNo;
-            Password = password;
-            ConfirmPassword = confirmPassword;
-        }
-        public string Name { get; set; }
-        public string MobileNo { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
-    }
-
-    public class CreateAccountResponseDto
-    {
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
-    }
-
-    // Table
-    public class AccountDto
-    {
-        public AccountDto(string id, string name, string mobileNo, string password, decimal balance = 0) //constructor
-        {
-            AccountId = id;
-            Name = name;
-            MobileNo = mobileNo;
-            Password = password;
-            Balance = balance;
-        }
-        public string AccountId { get; set; }
-        public string Name { get; set; }
-        public string MobileNo { get; set; }
-        public string Password { get; set; }
-        public decimal Balance { get; set; }
-    }
-}
+ }
