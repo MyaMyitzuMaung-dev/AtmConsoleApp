@@ -74,6 +74,18 @@
         public decimal Amount { get; set; }
     }
 
+    public class LoginRequestDto
+    {
+        public LoginRequestDto(string mobileNo, string password)
+        {
+            MobileNo = mobileNo;
+            Password = password;
+        }
+
+        public string MobileNo { get; set; }
+        public string Password { get; set; }
+    }
+
     #endregion
 
     // Business Logic
@@ -213,5 +225,24 @@
                 Message = $"Withdraw successful. Current balance: {account.Balance}"
             };
         }
+
+        public BasicResponseDto Login(LoginRequestDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request.MobileNo))
+                return new BasicResponseDto { IsSuccess = false, Message = "Please enter your mobile no." };
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+                return new BasicResponseDto { IsSuccess = false, Message = "Please enter your password." };
+
+            var account = _accounts.FirstOrDefault(x => x.MobileNo == request.MobileNo.Trim());
+            if (account is null)
+                return new BasicResponseDto { IsSuccess = false, Message = "Account not found." };
+
+            if (account.Password != request.Password)
+                return new BasicResponseDto { IsSuccess = false, Message = "Invalid password." };
+
+            return new BasicResponseDto { IsSuccess = true, Message = $"Hello, {account.Name}!" };
+        }
+
     }
 }

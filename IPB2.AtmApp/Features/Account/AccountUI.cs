@@ -3,27 +3,81 @@
     public class AccountUI
     {
         private readonly AccountService _service = new AccountService();
+        private string? _currentMobileNo;
 
         public void Start()
         {
             while (true)
             {
-                Console.WriteLine("\n=== ATM App (Step 1) ===");
-                Console.WriteLine("1) Create Account");
-                Console.WriteLine("2) Deposit");
-                Console.WriteLine("3) Check Balance");
-                Console.WriteLine("4) Withdraw");
+                ShowMainMenu();
+            }
+        }
+
+        public void ShowMainMenu()
+        {
+            Console.WriteLine("\n=== Main Menu ===");
+            Console.WriteLine("1) Create Account");
+            Console.WriteLine("2) Enter Account");
+            Console.WriteLine("3) Exit");
+            Console.Write("Choose: ");
+            var choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    CreateAccount();
+                    break;
+
+                case "2":
+                    EnterAccount();
+                    break;
+
+                case "3":
+                    return; // Exit program
+                default:
+                    Console.WriteLine("Invalid option.");
+                    break;
+            }
+        }
+        private void SessionMenu()
+        {
+            while (_currentMobileNo != null)
+            {
+                Console.WriteLine("\n=== Session Menu ===");
+                Console.WriteLine("1) Deposit");
+                Console.WriteLine("2) Check Balance");
+                Console.WriteLine("3) Withdraw");
+                Console.WriteLine("4) Logout");
                 Console.WriteLine("5) Exit");
                 Console.Write("Choose: ");
                 var choice = Console.ReadLine();
 
+                switch (choice)
+                {
+                    case "1":
+                        Deposit();
+                        break;
 
-                if (choice == "1") CreateAccount();
-                else if (choice == "2") CreateDeposit();
-                else if (choice == "3") CheckBalance();
-                else if (choice == "4") Withdraw();
-                else if (choice == "5") return;
-                else Console.WriteLine("Invalid option.");
+                    case "2":
+                        CheckBalance();
+                        break;
+
+                    case "3":
+                        Withdraw();
+                        break;
+
+                    case "4":
+                        Logout();
+                        return; // back to main menu
+
+                    case "5":
+                        Environment.Exit(0);
+                        return;
+
+                    default:
+                        Console.WriteLine("Invalid option.");
+                        break;
+                }
             }
         }
 
@@ -59,57 +113,64 @@
             Console.WriteLine(result.Message);
         }
 
-        private void CreateDeposit()
+        private void Deposit()
         {
             Console.WriteLine("\n=== Deposit ===");
-
-            Console.Write("Enter your mobile no: ");
-            string mobileNo = Console.ReadLine() ?? "";
-
             Console.Write("Enter amount: ");
-            if (!decimal.TryParse(Console.ReadLine(), out var amount)) //TryParse to convert string to decimal, but only for no.
-            {
-                Console.WriteLine("Invalid amount.");
-                return;
-            }
 
-            var req = new DepositRequestDto(mobileNo, amount);
-            var result = _service.CreateDeposit(req);
-
-            Console.WriteLine(result.Message);
-        }
-
-        private void CheckBalance()
-        {
-            Console.WriteLine("\n=== Check Balance ===");
-
-            Console.Write("Enter your mobile no: ");
-            string mobileNo = Console.ReadLine() ?? "";
-
-            var req = new BalanceRequestDto(mobileNo);
-            var result = _service.GetBalance(req);
-
-            Console.WriteLine(result.Message);
-        }
-
-        private void Withdraw()
-        {
-            Console.WriteLine("\n=== Withdraw ===");
-
-            Console.Write("Enter your mobile no: ");
-            string mobileNo = Console.ReadLine() ?? "";
-
-            Console.Write("Enter amount: ");
             if (!decimal.TryParse(Console.ReadLine(), out var amount))
             {
                 Console.WriteLine("Invalid amount.");
                 return;
             }
 
-            var req = new WithdrawRequestDto(mobileNo, amount);
-            var result = _service.Withdraw(req);
-
+            var result = _service.CreateDeposit(new DepositRequestDto(_currentMobileNo!, amount));
             Console.WriteLine(result.Message);
+        }
+
+        private void CheckBalance()
+        {
+            Console.WriteLine("\n=== Check Balance ===");
+            var result = _service.GetBalance(new BalanceRequestDto(_currentMobileNo!));
+            Console.WriteLine(result.Message);
+        }
+
+        private void Withdraw()
+        {
+            Console.WriteLine("\n=== Withdraw ===");
+            Console.Write("Enter amount: ");
+
+            if (!decimal.TryParse(Console.ReadLine(), out var amount))
+            {
+                Console.WriteLine("Invalid amount.");
+                return;
+            }
+
+            var result = _service.Withdraw(new WithdrawRequestDto(_currentMobileNo!, amount));
+            Console.WriteLine(result.Message);
+        }
+
+        private void EnterAccount()
+        {
+            Console.WriteLine("\n=== Enter Account ===");
+            Console.Write("Enter your mobile no: ");
+            string mobileNo = Console.ReadLine() ?? "";
+
+            Console.Write("Enter your password: ");
+            string password = Console.ReadLine() ?? "";
+
+            var result = _service.Login(new LoginRequestDto(mobileNo, password));
+            Console.WriteLine(result.Message);
+
+            if (!result.IsSuccess) return;
+
+            _currentMobileNo = mobileNo.Trim();
+            SessionMenu();
+        }
+        private void Logout()
+        {
+            _currentMobileNo = null;
+            Console.WriteLine("Logged out.");
         }
     }
  }
