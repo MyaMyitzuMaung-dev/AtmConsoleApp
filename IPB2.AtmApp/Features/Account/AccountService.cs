@@ -1,4 +1,6 @@
-﻿namespace IPB2.AtmApp.Features.Account
+﻿using System.Text.RegularExpressions;
+
+namespace IPB2.AtmApp.Features.Account
 {
     #region Dtos
     public class CreateAccountRequestDto
@@ -111,6 +113,14 @@
                 {
                     IsSuccess = false,
                     Message = "Please enter your mobile no."
+                };
+            }
+            if (!IsValidMyanmarMobile(request.MobileNo))
+            {
+                return new BasicResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Please enter a valid Myanmar mobile number."
                 };
             }
             if (string.IsNullOrEmpty(request.Password))
@@ -242,6 +252,17 @@
                 return new BasicResponseDto { IsSuccess = false, Message = "Invalid password." };
 
             return new BasicResponseDto { IsSuccess = true, Message = $"Hello, {account.Name}!" };
+        }
+
+        private bool IsValidMyanmarMobile(string mobile)
+        {
+            if (string.IsNullOrWhiteSpace(mobile))
+                return false;
+
+            mobile = mobile.Trim();
+
+            // Myanmar numbers: 09 + 7–9 digits OR 959 + 7–9 digits
+            return Regex.IsMatch(mobile, @"^(09\d{7,9}|959\d{7,9})$");
         }
 
     }
