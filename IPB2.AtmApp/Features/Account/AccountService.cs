@@ -38,7 +38,7 @@ namespace IPB2.AtmApp.Features.Account
         public string AccountId { get; set; }
         public string Name { get; set; }
         public string MobileNo { get; set; }
-        public string Password { get; set; }
+        public string Password { get; set; } //pin code
         public decimal Balance { get; set; }
     }
 
