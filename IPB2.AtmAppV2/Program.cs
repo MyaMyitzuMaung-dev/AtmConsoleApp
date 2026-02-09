@@ -5,9 +5,6 @@ using System.Data;
 // Dapper
 // EFCore
 
-string a = default;
-int b = default;
-
 SqlConnectionStringBuilder sqlConnectionStringBuilder = new SqlConnectionStringBuilder();
 sqlConnectionStringBuilder.DataSource = ".";
 sqlConnectionStringBuilder.InitialCatalog = "InPersonBatch2";
@@ -22,15 +19,15 @@ connection.Open();
 
 #region Read
 
-//SqlCommand cmd = new SqlCommand(@"SELECT [AccountId]
-//      ,[Name]
-//      ,[MobileNo]
-//      ,[Password]
-//      ,[Balance]
-//  FROM [dbo].[Tbl_Account] Where IsDelete = 0", connection);
-//SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-//DataTable dt = new DataTable();
-//adapter.Fill(dt);
+SqlCommand cmd = new SqlCommand(@"SELECT [AccountId]
+      ,[Name]
+      ,[MobileNo]
+      ,[Password]
+      ,[Balance]
+  FROM [dbo].[Tbl_Account] Where IsDelete = 0", connection);
+SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+DataTable dt = new DataTable();
+adapter.Fill(dt);
 
 #endregion
 
