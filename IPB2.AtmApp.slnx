@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="IPB2.ADO.NETApp/IPB2.ADO.NETApp.csproj" Id="3d720579-f1e3-49eb-8fc4-fa15a187654f" />
   <Project Path="IPB2.AtmApp/IPB2.AtmApp.csproj" />
+  <Project Path="IPB2.DapperApp/IPB2.DapperApp.csproj" Id="3acda3a6-3976-4166-bdce-d97758b5e8c0" />
 </Solution>
