@@ -2,4 +2,6 @@
   <Project Path="IPB2.ADO.NETApp/IPB2.ADO.NETApp.csproj" Id="3d720579-f1e3-49eb-8fc4-fa15a187654f" />
   <Project Path="IPB2.AtmApp/IPB2.AtmApp.csproj" />
   <Project Path="IPB2.DapperApp/IPB2.DapperApp.csproj" Id="3acda3a6-3976-4166-bdce-d97758b5e8c0" />
+  <Project Path="IPB2.StaffApp/IPB2.StaffApp.csproj" Id="7fdabe7e-28cf-4689-9af9-260fdaf82f66" />
+  <Project Path="IPB2.TeacherApp/IPB2.TeacherApp.csproj" Id="d3bad4ff-d1a4-43a9-b54a-79382b2ab259" />
 </Solution>
